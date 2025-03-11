@@ -23,24 +23,6 @@ We will use virtual hardware, such as CounterFit, to simulate IoT devices and se
    from counterfit_connection import CounterFitConnection
    CounterFitConnection.init('127.0.0.1', 5000)
    ```
-
-## Project Scope
-This project involves developing applications for various sensors, including:
-- **Accelerometer**
-- **Proximity**
-- **Pressure**
-- **Light**
-- **Air Quality**
-- **Infrared**
-- **Motion**
-
-### Research Topics
-In addition to sensor applications, we will explore:
-- OPC-UA and IoT
-- Kafka and IoT
-- DeepSeek and IoT
-- Layers and components in IoT architectures
-
 ## Assignment and Presentation
 ### Group Work Requirements
 - Prepare slides summarizing key concepts and assignment results.
