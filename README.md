@@ -67,6 +67,3 @@ We will use virtual hardware, such as CounterFit, to simulate IoT devices and se
 3. Create a **feature branch** for your changes.
 4. Commit and push your changes.
 5. Submit a **pull request** for review.
-
-## License
-This project follows the MIT License. See `LICENSE` for details.
