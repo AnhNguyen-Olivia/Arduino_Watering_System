@@ -88,6 +88,3 @@ In addition to sensor applications, we will explore:
 
 ## License
 This project follows the MIT License. See `LICENSE` for details.
-
----
-For any queries, please contact your instructor or group members.
