@@ -9,15 +9,23 @@ TELEMETRY_TOPIC = "arduino/soil_moisture"
 COMMAND_TOPIC = "arduino/relay_control"
 
 def on_message(client, userdata, message):
-    """Updated callback signature for API v2.x"""
     global serial_connection
     try:
         if message.topic == COMMAND_TOPIC:
-            payload = json.loads(message.payload.decode())
+            raw_payload = message.payload.decode()
+            print(f"Received raw payload: {raw_payload}")
+            
+            payload = json.loads(raw_payload)
+            
             if payload["relay_on"]:
                 serial_connection.write(b"RELAY_ON\n")
             else:
                 serial_connection.write(b"RELAY_OFF\n")
+                
+    except json.JSONDecodeError as e:
+        print(f"Invalid JSON: {e}")
+    except KeyError as e:
+        print(f"Missing key 'relay_on' in payload")
     except Exception as e:
         print(f"Error handling message: {e}")
 
@@ -27,12 +35,9 @@ def main():
     client = None
     
     try:
-        # Initialize Serial
         serial_connection = serial.Serial(SERIAL_PORT, BAUD_RATE)
-        
-        # Initialize MQTT with version 2 API
         client = mqtt.Client(
-            mqtt.CallbackAPIVersion.VERSION2,  # <-- Key change here
+            mqtt.CallbackAPIVersion.VERSION2,
             client_id="arduino_bridge"
         )
         client.on_message = on_message
@@ -41,8 +46,6 @@ def main():
         client.loop_start()
 
         print("Bridge running. Press Ctrl+C to exit")
-        
-        # Main loop
         while True:
             if serial_connection.in_waiting:
                 line = serial_connection.readline().decode().strip()
@@ -52,9 +55,7 @@ def main():
     
     except Exception as e:
         print(f"Error: {e}")
-    
     finally:
-        # Cleanup with proper order and checks
         if client:
             client.loop_stop()
             if client.is_connected():
