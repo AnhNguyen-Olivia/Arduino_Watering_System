@@ -176,6 +176,9 @@ if __name__ == "__main__":
 ### Summary
 
 This Python script acts as a **bridge** between an Arduino and an MQTT broker, allowing:
+
 ✅ **Real-time soil moisture monitoring**
+
 ✅ **Automatic watering based on moisture levels**
+
 ✅ **Manual relay control via MQTT commands**
