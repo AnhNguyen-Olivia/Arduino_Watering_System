@@ -1,69 +1,109 @@
-# IoT University Project [ID: 06]
+# IoT University Project [ID: 06]-Arduino Watering System
 
 ## Overview
-This project is based on ["IoT for Beginners"](https://aka.ms/iot-beginners) and follows the lessons from [Microsoft's IoT-For-Beginners](https://github.com/microsoft/IoT-For-Beginners/tree/main/2-farm/lessons/3-automated-plant-watering). It involves developing applications using virtual hardware to simulate sensor interactions. The project is conducted as a group activity, culminating in a presentation and demonstration.
 
-## Environment Setup
-We will use virtual hardware, such as CounterFit, to simulate IoT devices and sensors.
+This project is based on "IoT for Beginners" and follows the lessons from Microsoft's IoT-For-Beginners. It involves developing applications using actual hardware to simulate sensor interactions. The project is conducted as a group activity, culminating in a presentation and demonstration. We use an Arduino Uno to implement the system.
 
-### Required Software
-- **Python 3.9.1** (Do not download from the website; install via the Microsoft Store)
-- **Flask 2.1.2** (`pip install Flask==2.1.2`)
-- **Werkzeug 2.1.2** (`pip install Werkzeug==2.1.2`)
-- **CounterFit** (launch with `counterfit` and open [http://127.0.0.1:5000/](http://127.0.0.1:5000/))
+## Features
 
-### Running CounterFit
-1. Open VS Code Terminal and launch CounterFit:
+- **Automatic Mode**: Waters plants based on soil moisture levels.
+- **Manual Control**: Control the relay via MQTT commands using the Mosquitto client.
+- **MQTT Integration**: Uses a public MQTT broker for remote monitoring and control.
+- **Real-Time Monitoring**: Subscribe to soil moisture data from the Arduino.
+
+## Hardware Requirements
+
+- Arduino (e.g., Uno, ESP8266, ESP32)
+- Soil moisture sensor
+- Relay module
+- Water pump
+- Jumper wires
+
+## Installation
+
+1. Clone this repository:
+
    ```sh
-   counterfit
+   git clone https://github.com/yourusername/Arduino-Watering-System.git
+   cd Arduino-Watering-System
    ```
-2. Open the web interface at [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
-3. Run the Python script (`app.py`):
-   ```python
-   from counterfit_connection import CounterFitConnection
-   CounterFitConnection.init('127.0.0.1', 5000)
+
+2. Install Mosquitto clients for MQTT communication:
+
+   - **On Debian/Ubuntu**:
+
+     ```sh
+     sudo apt-get install mosquitto-clients
+     ```
+
+   - **On Windows**:
+     1. Download the Mosquitto installer from the [Mosquitto download page](https://mosquitto.org/download/).
+     2. Run the installer and ensure the "Mosquitto Command Line Client Tools" option is selected.
+     3. Add the installation directory (e.g., `C:\Program Files\Mosquitto`) to your system's PATH environment variable. This allows you to use the `mosquitto_pub` and `mosquitto_sub` commands from the terminal.
+
+3. Install Python dependencies (required if using the Python script):
+
+   ```sh
+   pip install -r requirements.txt
    ```
-## Assignment and Presentation
-### Group Work Requirements
-- Prepare slides summarizing key concepts and assignment results.
-- Use instructor-provided preliminary slides ([Google Drive Link](https://drive.google.com/drive/folders/1INXCNAvpfRYMtcLCYrTFmM9IJpNdlFGv?usp=drive_link)).
-- No need to detail individual tasks—just list task names.
 
-### Presentation & Demo
-- Duration: **30-45 minutes**.
-- **Before the seminar**, upload slides to Moodle.
-- The first slide should include:
-  - Student IDs
-  - Names
-  - GitHub repository link
-- Merge all slides into one **PDF file**.
-- **Naming convention:** `Group_[ID_Number]_[TopicName].pdf` (e.g., `Group_06_Automated_Plant_Watering.pdf`).
-- One upload per group is sufficient.
-- **Each member must present or demo.**
+4. Upload the Arduino sketch:
 
-## Additional Instructions
-- **Building a Nightlight (Virtual IoT Hardware)**
-  - Work on `virtual-device-sensor.md` to add a light sensor before running the code.
+   - Use `auto_watering.ino` for automatic moisture-based watering.
+   - Use `manual_watering.ino` for MQTT manual control.
 
-## Repository Structure
+## MQTT Configuration
+
+- **Broker**: `test.mosquitto.org` (public broker)
+- **Soil Moisture Topic**: `arduino/soil_moisture` (subscribe)
+- **Relay Control Topic**: `arduino/relay_control` (publish)
+- **Command Format**: Send JSON payload `{ "relay_on": true }` or `{ "relay_on": false }`
+
+## Usage
+
+### Automatic Mode
+
+The system will water plants automatically when the soil moisture drops below a threshold.
+
+### Manual Control via MQTT
+
+#### Subscribe to Soil Moisture Data
+
+```sh
+mosquitto_sub -h test.mosquitto.org -t "arduino/soil_moisture"
 ```
-📂 iot-university-project
-├── 📂 src
-│   ├── app.py
-│   ├── sensor_simulation.py
-│   ├── ...
-├── 📂 docs
-│   ├── virtual-device-sensor.md
-│   ├── research_topics.md
-├── 📂 slides
-│   ├── Group_XX_TopicName.pdf
-│   ├── ...
-├── README.md
-└── requirements.txt
+
+#### Control the Water Pump
+
+**Turn the relay ON:**
+
+```sh
+mosquitto_pub -h test.mosquitto.org -t "arduino/relay_control" -m '{\"relay_on\": true}'
 ```
-## Contribution Guidelines
-1. **Fork** the repository.
-2. **Clone** the repository to your local machine.
-3. Create a **feature branch** for your changes.
-4. Commit and push your changes.
-5. Submit a **pull request** for review.
+
+**Turn the relay OFF:**
+
+```sh
+
+mosquitto_pub -h test.mosquitto.org -t "arduino/relay_control" -m '{\"relay_on\": false}'
+```
+
+## Python MQTT Handler (Optional)
+
+If using the included Python script for relay control:
+
+Run the script:
+
+```sh
+python python_control/mqtt_relay_control.py
+```
+
+Ensure the script is configured to subscribe to `arduino/relay_control` and parse JSON payloads.
+
+## Contributing
+
+Contributions are welcome! Fork the repository and submit pull requests.
+
+## License
+
+This project is licensed under the MIT License.
