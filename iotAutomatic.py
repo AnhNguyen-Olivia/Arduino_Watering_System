@@ -41,7 +41,7 @@ def control_relay():
         # Turn relay ON
         serial_connection.write(b"RELAY_ON\n")
         print("Relay activated - watering started")
-        time.sleep(2)  # Watering duration
+        time.sleep(5)  # Watering duration
         
         # Turn relay OFF
         serial_connection.write(b"RELAY_OFF\n")
